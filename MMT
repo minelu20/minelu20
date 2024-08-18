@@ -1,0 +1,134 @@
+#include <LiquidCrystal_I2C.h>
+
+#define inputCLK 2
+#define inputDT 3
+#define inputSW 4
+#define inputBT 5
+
+LiquidCrystal_I2C lcd(0X27,2,16);
+
+bool enterBT;
+bool backBT;
+
+int counter;
+int currentStateCLK;
+int previousStateCLK;
+int menupoint;
+int oldmenupoint;
+
+
+void setup(){
+ Serial.begin(9600);
+
+ lcd.init();
+ lcd.backlight();
+
+ pinMode(inputCLK,INPUT);
+ pinMode(inputDT,INPUT);
+ pinMode(inputSW,INPUT);
+ pinMode(inputBT,INPUT);
+
+ previousStateCLK = digitalRead(inputCLK);
+ counter = 0;
+
+ start();
+}
+
+void start(){
+    lcd.clear();
+    lcd.setCursor(0,0);
+    lcd.print("Multimotortester");
+    lcd.setCursor(8,1);
+    lcd.print("by Lukas");
+    delay(1000);
+    lcd.clear();
+}
+
+int inputs(){
+
+  currentStateCLK = digitalRead(inputCLK);
+   if (currentStateCLK != previousStateCLK){ 
+     if (digitalRead(inputDT) != currentStateCLK) { 
+       counter ++;
+     } else {
+       counter --;
+     }
+   } 
+   previousStateCLK = currentStateCLK;
+   Serial.println(counter);
+
+  if (digitalRead(inputSW)== LOW){
+    Serial.print("Enter");
+    enterBT = 1;
+    delay(200);
+  }
+  else enterBT = 0;
+  if (digitalRead(inputBT) == HIGH){
+    Serial.print("Back"); 
+    backBT = 1;
+    delay(200);
+  }
+  else backBT = 0;
+
+  return counter,enterBT,backBT;
+}
+
+int menucontrol(int counter, bool enterBT, bool backBT){
+}
+void mainmenu(int menupoint){
+
+ if (menupoint != oldmenupoint){
+  switch(menupoint){
+    case 1:
+    lcd.clear();
+    lcd.setCursor(0,0);
+    lcd.print(">PWM");
+    lcd.setCursor(0,1);
+    lcd.print("DC Output");
+    break;
+    case 2:
+    lcd.clear();
+    lcd.setCursor(0,0);
+    lcd.print(">DC Output");
+    lcd.setCursor(0,1);
+    lcd.print("Stepper");
+    break;
+    case 3:
+    lcd.clear();
+    lcd.setCursor(0,0);
+    lcd.print(">Stepper");
+    lcd.setCursor(0,1);
+    lcd.print("Options");
+    break;
+    case 4:
+    lcd.clear();
+    lcd.setCursor(0,0);
+    lcd.print(">Options");
+    lcd.setCursor(0,1);
+    lcd.print("PWM");
+    break;
+  }
+  oldmenupoint = menupoint;
+ }
+ Serial.print(menupoint); 
+}
+bool control(int menupoint, bool enterBT,bool backBT){
+
+
+}
+
+void outputs(){
+
+}
+
+
+
+void loop(){
+/*
+inputs();
+menucontrol(counter,enterBT,backBT);
+mainmenu(menupoint);
+control(menupoint,enterBT,backBT);
+outputs();
+*/
+}
